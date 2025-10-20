@@ -60,51 +60,54 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
-          /notifications:
-  get:
-    tags: [Notifications]
-    operationId: listNotifications
-    summary: List notifications
-    description: Mengembalikan daftar notifikasi terbaru.
-    security: [{ bearerAuth: [] }]
-    parameters:
-      - name: limit
-        in: query
-        description: Batas jumlah item yang dikembalikan
-        schema: { type: integer, minimum: 1, maximum: 100, default: 10 }
-    responses:
-      '200':
-        description: OK
-        headers:
-          x-correlation-id:
-            description: ID korelasi untuk tracing request
-            schema: { type: string }
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                data:
-                  type: array
-                  items: { $ref: '#/components/schemas/Notification' }
-                total: { type: integer }
-            examples:
-              sample:
-                value:
+
+  /notifications:
+    get:
+      tags: [Notifications]
+      operationId: listNotifications
+      summary: List notifications
+      description: Mengembalikan daftar notifikasi terbaru.
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: limit
+          in: query
+          description: Batas jumlah item yang dikembalikan
+          schema: { type: integer, minimum: 1, maximum: 100, default: 10 }
+      responses:
+        '200':
+          description: OK
+          headers:
+            x-correlation-id:
+              description: ID korelasi untuk tracing request
+              schema: { type: string }
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
                   data:
-                    - id: "n1"
-                      type: "ORDER_CREATED"
-                      message: "Order created successfully"
-                      createdAt: "2025-10-16T03:21:34.000Z"
-                  total: 1
-      '401':
-        $ref: '#/components/responses/Unauthorized'
-        components:
+                    type: array
+                    items: { $ref: '#/components/schemas/Notification' }
+                  total: { type: integer }
+              examples:
+                sample:
+                  value:
+                    data:
+                      - id: "n1"
+                        type: "ORDER_CREATED"
+                        message: "Order created successfully"
+                        createdAt: "2025-10-16T03:21:34.000Z"
+                    total: 1
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
+
   responses:
     BadRequest:
       description: Validation error
@@ -119,10 +122,12 @@ paths:
       description: Missing/invalid bearer token
       content:
         application/json:
-          schema: { $ref: '#/components/schemas/Error' }
+          schema:
+            $ref: '#/components/schemas/Error'
           examples:
             noToken:
               value: { message: "Unauthorized", code: "UNAUTH" }
+
   schemas:
     CreateOrder:
       type: object
@@ -149,4 +154,3 @@ paths:
       properties:
         message: { type: string }
         code: { type: string }
-        
